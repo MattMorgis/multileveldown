@@ -13,7 +13,7 @@
     "protocol-buffers-encodings": "^1.1.0"
   },
   "devDependencies": {
-    "concat-stream": "^1.5.1",
+    "level-mem": "^3.0.0",
     "memdown": "^1.1.0",
     "protocol-buffers": "^4.0.2",
     "standard": "^5.4.1",
