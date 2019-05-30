@@ -12,7 +12,7 @@ tape('get', function (t) {
   stream.pipe(client.createRpcStream()).pipe(stream)
 
   db.put('hello', 'world', function () {
-    client.get('hello', function (err, value) {
+    client.get('hello', {asBuffer: false}, function (err, value) {
       t.error(err, 'no err')
       t.same(value, 'world')
       t.end()
@@ -29,7 +29,7 @@ tape('put', function (t) {
 
   client.put('hello', 'world', function (err) {
     t.error(err, 'no err')
-    client.get('hello', function (err, value) {
+    client.get('hello', {asBuffer: false}, function (err, value) {
       t.error(err, 'no err')
       t.same(value, 'world')
       t.end()
@@ -49,7 +49,7 @@ tape('readonly', function (t) {
 
   client.put('hello', 'world', function (err) {
     t.ok(err, 'put failed')
-    client.get('hello', function (err, value) {
+    client.get('hello', {asBuffer: false}, function (err, value) {
       t.error(err, 'no err')
       t.same(value, 'verden', 'old value')
       t.end()
@@ -68,7 +68,7 @@ tape('del', function (t) {
     t.error(err, 'no err')
     client.del('hello', function (err) {
       t.error(err, 'no err')
-      client.get('hello', function (err) {
+      client.get('hello', {asBuffer: false}, function (err) {
         t.ok(err, 'had error')
         t.ok(err.notFound, 'not found err')
         t.end()
@@ -86,10 +86,10 @@ tape('batch', function (t) {
 
   client.batch([{type: 'put', key: 'hello', value: 'world'}, {type: 'put', key: 'hej', value: 'verden'}], function (err) {
     t.error(err, 'no err')
-    client.get('hello', function (err, value) {
+    client.get('hello', {asBuffer: false}, function (err, value) {
       t.error(err, 'no err')
       t.same(value, 'world')
-      client.get('hej', function (err, value) {
+      client.get('hej', {asBuffer: false}, function (err, value) {
         t.error(err, 'no err')
         t.same(value, 'verden')
         t.end()

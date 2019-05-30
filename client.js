@@ -1,6 +1,5 @@
 var levelup = require('levelup')
 var duplexify = require('duplexify')
-var encode = require('encoding-down')
 var leveldown = require('./leveldown')
 
 module.exports = function (opts) {
@@ -10,7 +9,7 @@ module.exports = function (opts) {
 
   opts.onflush = onflush
 
-  var db = levelup(encode(down))
+  var db = levelup(down)
 
   db.createRpcStream = db.connect = connect
 

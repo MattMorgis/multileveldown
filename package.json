@@ -7,7 +7,6 @@
     "abstract-leveldown": "^5.0.0",
     "buffer-alloc": "^1.1.0",
     "duplexify": "^3.4.2",
-    "encoding-down": "^5.0.0",
     "end-of-stream": "^1.1.0",
     "length-prefixed-stream": "^2.0.0",
     "levelup": "^2.0.0",
