@@ -1,15 +1,15 @@
 var tape = require('tape')
-var memdown = require('memdown')
 var levelup = require('levelup')
+var memdown = require('memdown')
 var multileveldown = require('../')
 
 tape('retry get', function (t) {
-  var db = levelup('no-location', {db: memdown})
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client({retry: true})
 
   db.put('hello', 'world', function () {
-    client.get('hello', function (err, value) {
+    client.get('hello', {asBuffer: false}, function (err, value) {
       t.error(err, 'no err')
       t.same(value, 'world')
       t.end()
@@ -20,13 +20,13 @@ tape('retry get', function (t) {
 })
 
 tape('no retry get', function (t) {
-  var db = levelup('no-location', {db: memdown})
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client({retry: false})
 
   client.open(function () {
     db.put('hello', 'world', function () {
-      client.get('hello', function (err, value) {
+      client.get('hello', {asBuffer: false}, function (err, value) {
         t.ok(err, 'had error')
         t.end()
       })
@@ -44,13 +44,13 @@ tape('no retry get', function (t) {
 })
 
 tape('retry get', function (t) {
-  var db = levelup('no-location', {db: memdown})
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client({retry: true})
 
   client.open(function () {
     db.put('hello', 'world', function () {
-      client.get('hello', function (err, value) {
+      client.get('hello', {asBuffer: false}, function (err, value) {
         t.error(err, 'no err')
         t.same(value, 'world')
         t.end()
@@ -69,7 +69,7 @@ tape('retry get', function (t) {
 })
 
 tape('retry read stream', function (t) {
-  var db = levelup('no-location', {db: memdown})
+  var db = levelup(memdown())
   var client = multileveldown.client({retry: true})
 
   client.open(function () {
@@ -86,7 +86,7 @@ tape('retry read stream', function (t) {
       key: 'hola',
       value: 'mundo'
     }], function () {
-      var rs = client.createReadStream()
+      var rs = client.createReadStream({valueEncoding: 'utf-8', keyEncoding: 'utf-8'})
       var expected = [{
         key: 'hej',
         value: 'verden'
@@ -124,7 +124,7 @@ tape('retry read stream', function (t) {
 })
 
 tape('retry read stream and limit', function (t) {
-  var db = levelup('no-location', {db: memdown})
+  var db = levelup(memdown())
   var client = multileveldown.client({retry: true})
 
   client.open(function () {
@@ -141,7 +141,7 @@ tape('retry read stream and limit', function (t) {
       key: 'hola',
       value: 'mundo'
     }], function () {
-      var rs = client.createReadStream({limit: 2})
+      var rs = client.createReadStream({limit: 2, valueEncoding: 'utf-8', keyEncoding: 'utf-8'})
       var expected = [{
         key: 'hej',
         value: 'verden'

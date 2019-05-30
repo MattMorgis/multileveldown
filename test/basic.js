@@ -1,10 +1,11 @@
 var tape = require('tape')
-var level = require('level-mem')
+var levelup = require('levelup')
+var memdown = require('memdown')
 var concat = require('concat-stream')
 var multileveldown = require('../')
 
 tape('get', function (t) {
-  var db = level('no-location')
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client()
 
@@ -20,7 +21,7 @@ tape('get', function (t) {
 })
 
 tape('put', function (t) {
-  var db = level('no-location')
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client()
 
@@ -37,7 +38,7 @@ tape('put', function (t) {
 })
 
 tape('readonly', function (t) {
-  var db = level('no-location')
+  var db = levelup(memdown())
 
   db.put('hello', 'verden')
 
@@ -57,7 +58,7 @@ tape('readonly', function (t) {
 })
 
 tape('del', function (t) {
-  var db = level('no-location')
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client()
 
@@ -77,7 +78,7 @@ tape('del', function (t) {
 })
 
 tape('batch', function (t) {
-  var db = level('no-location')
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client()
 
@@ -98,7 +99,7 @@ tape('batch', function (t) {
 })
 
 tape('read stream', function (t) {
-  var db = level('no-location')
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client()
 
@@ -106,7 +107,7 @@ tape('read stream', function (t) {
 
   client.batch([{type: 'put', key: 'hello', value: 'world'}, {type: 'put', key: 'hej', value: 'verden'}], function (err) {
     t.error(err, 'no err')
-    var rs = client.createReadStream()
+    var rs = client.createReadStream({valueEncoding: 'utf-8', keyEncoding: 'utf-8'})
     rs.pipe(concat(function (datas) {
       t.same(datas.length, 2)
       t.same(datas[0], {key: 'hej', value: 'verden'})
@@ -117,7 +118,7 @@ tape('read stream', function (t) {
 })
 
 tape('read stream (gt)', function (t) {
-  var db = level('no-location')
+  var db = levelup(memdown())
   var stream = multileveldown.server(db)
   var client = multileveldown.client()
 
@@ -125,7 +126,7 @@ tape('read stream (gt)', function (t) {
 
   client.batch([{type: 'put', key: 'hello', value: 'world'}, {type: 'put', key: 'hej', value: 'verden'}], function (err) {
     t.error(err, 'no err')
-    var rs = client.createReadStream({gt: 'hej'})
+    var rs = client.createReadStream({gt: 'hej', valueEncoding: 'utf-8', keyEncoding: 'utf-8'})
     rs.pipe(concat(function (datas) {
       t.same(datas.length, 1)
       t.same(datas[0], {key: 'hello', value: 'world'})

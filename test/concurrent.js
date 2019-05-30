@@ -5,7 +5,7 @@ var concat = require('concat-stream')
 var multileveldown = require('../')
 
 tape('two concurrent iterators', function (t) {
-  var db = levelup('', {db: memdown})
+  var db = levelup(memdown())
   var server = multileveldown.server(db)
   var client = multileveldown.client()
 

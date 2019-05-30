@@ -1,22 +1,20 @@
 var levelup = require('levelup')
 var duplexify = require('duplexify')
+var encode = require('encoding-down')
 var leveldown = require('./leveldown')
 
 module.exports = function (opts) {
   if (!opts) opts = {}
 
-  var down
-  opts.db = createLeveldown
+  var down = leveldown('multileveldown', opts)
+
   opts.onflush = onflush
-  var db = levelup('multileveldown', opts)
+
+  var db = levelup(encode(down))
+
   db.createRpcStream = db.connect = connect
 
   return db
-
-  function createLeveldown (path) {
-    down = leveldown(path, opts)
-    return down
-  }
 
   function onflush () {
     db.emit('flush')
